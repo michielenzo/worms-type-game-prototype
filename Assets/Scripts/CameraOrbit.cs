@@ -9,6 +9,7 @@ public class CameraOrbit : MonoBehaviour
     [SerializeField]
     public GameObject followTarget;
 
+    // Orbit camera
     private Vector3 _localRotation;
     
     [SerializeField]
@@ -23,6 +24,13 @@ public class CameraOrbit : MonoBehaviour
     private float scrollDampening = 6f;
     [SerializeField]
     private bool cameraDisabled;
+
+    // Aim camera
+    /*public float speedH = 2.0f;
+    public float speedV = 2.0f;
+
+    private float yaw = 0.0f;
+    private float pitch = 0.0f;*/
 
     private void Start()
     {
@@ -41,9 +49,27 @@ public class CameraOrbit : MonoBehaviour
     private void LateUpdate()
     {
         if (Input.GetKeyDown(KeyCode.LeftShift)) cameraDisabled = !cameraDisabled;
+        if (Input.GetKey(KeyCode.R)) AimCam();
+        else Orbit();
+    }
 
+    private void AimCam()
+    {
+        transform.position = Vector3.Lerp(transform.position, _transformPivot.position, 12 * Time.deltaTime);
+
+        /*yaw += speedH * Input.GetAxis("Mouse X");
+        pitch -= speedV * Input.GetAxis("Mouse Y");
+        
+        Debug.Log(transform.eulerAngles);
+        transform.eulerAngles = new Vector3(pitch, yaw, 0.0f);*/
+    }
+
+    private void Orbit()
+    {
         if (!cameraDisabled)
         {
+            Debug.Log(transform.eulerAngles);
+            
             //Rotation of the camera based on Mouse Coordinates.
             if (Input.GetAxis("Mouse X") != 0 || Input.GetAxis("Mouse Y") != 0)
             {
@@ -82,8 +108,8 @@ public class CameraOrbit : MonoBehaviour
                 0f,
                 0f,
                 Mathf.Lerp(_transformCamera.localPosition.z, 
-                              cameraDistance * -1f, 
-                              Time.deltaTime * scrollDampening));
-        }
+                    cameraDistance * -1f, 
+                    Time.deltaTime * scrollDampening));
+        }       
     }
 }
