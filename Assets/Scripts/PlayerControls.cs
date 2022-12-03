@@ -1,8 +1,6 @@
-using System;
+
 using Unity.Netcode;
 using UnityEngine;
-using UnityEngine.EventSystems;
-using UnityEngine.Serialization;
 
 public class PlayerControls : NetworkBehaviour
 {
