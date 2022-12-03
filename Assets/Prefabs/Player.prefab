@@ -15,7 +15,6 @@ GameObject:
   - component: {fileID: 102841429969376358}
   - component: {fileID: 102841429969376355}
   - component: {fileID: 2887266754857530254}
-  - component: {fileID: 3736118945453115855}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -157,15 +156,3 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   orbitCameraPrefab: {fileID: 1435627377655670476, guid: 54a674dce6cd4e747ae96d4fe7fb19c7, type: 3}
---- !u!114 &3736118945453115855
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 102841429969376357}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6d90c53f3eed9544380188f2e435e467, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
