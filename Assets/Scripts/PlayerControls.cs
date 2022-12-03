@@ -1,13 +1,14 @@
 
 using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public class PlayerControls : NetworkBehaviour
 {
     [SerializeField]
-    private GameObject orbitCameraPrefab;
+    private GameObject cameraPrefab;
 
-    private GameObject _orbitCamera;
+    private GameObject _camera;
 
     public override void OnNetworkSpawn()
     {
@@ -15,8 +16,8 @@ public class PlayerControls : NetworkBehaviour
         
         if(IsOwner) {
             // Instantiate the camera and assign the player as its follow target
-            _orbitCamera = _orbitCamera = Instantiate(orbitCameraPrefab, Vector3.zero, Quaternion.identity);
-            _orbitCamera.GetComponentInChildren<CameraOrbit>().followTarget = gameObject;
+            _camera = _camera = Instantiate(cameraPrefab, Vector3.zero, Quaternion.identity);
+            _camera.GetComponentInChildren<CameraConfig>().followTarget = gameObject;
         }
     }
 
@@ -33,7 +34,7 @@ public class PlayerControls : NetworkBehaviour
 
     private void Move()
     {
-        Vector3 orbitCameraForwardDirection = _orbitCamera.transform.forward;
+        Vector3 orbitCameraForwardDirection = _camera.transform.forward;
         orbitCameraForwardDirection.y = 0;
         transform.Translate(orbitCameraForwardDirection * (Time.deltaTime * 10));
     }

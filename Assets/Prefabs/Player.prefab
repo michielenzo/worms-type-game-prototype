@@ -155,4 +155,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1e42d0f82ac25e2479a1d9871b50ab6c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  orbitCameraPrefab: {fileID: 1435627377655670476, guid: 54a674dce6cd4e747ae96d4fe7fb19c7, type: 3}
+  cameraPrefab: {fileID: 1435627377655670476, guid: 54a674dce6cd4e747ae96d4fe7fb19c7, type: 3}
