@@ -1,8 +1,9 @@
+using Unity.Netcode;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Serialization;
 
-public class AimState : MonoBehaviour
+public class AimState : NetworkBehaviour
 {
     private PlayerControls _playerControls;
     private GameObject _playerCamera;
@@ -25,6 +26,11 @@ public class AimState : MonoBehaviour
         _config = GetComponent<CameraConfig>();
     }
 
+    public override void OnNetworkSpawn()
+    {
+        base.OnNetworkSpawn();
+    }
+
     public void OnEnter()
     {
         Debug.Log("Enter Aim");
@@ -40,6 +46,7 @@ public class AimState : MonoBehaviour
     public void OnUpdate()
     {
         if(!Input.GetKey(KeyCode.R)) CustomEvent.Trigger(gameObject, "EndAim");
+        if (Input.GetKeyDown(KeyCode.Mouse0)) FireBallisticMissile();
     }
 
     public void OnLateUpdate()
@@ -64,6 +71,27 @@ public class AimState : MonoBehaviour
 
         Quaternion quaternion = Quaternion.Euler(_pitch, _yaw, 0);
         _transformCamera.rotation = quaternion;
+    }
+    
+    private void FireBallisticMissile()
+    {
+        Vector3 rotation = _transformCamera.eulerAngles; rotation.x += 90;
+        Vector3 cameraForward = _transformCamera.forward;
+        Vector3 startingPosition = _transformCamera.position += cameraForward * 5;
+
+        SpawnBallisticMissileOnNetworkServerRpc(startingPosition, rotation, cameraForward);
+    }
+
+    [ServerRpc]
+    private void SpawnBallisticMissileOnNetworkServerRpc(Vector3 startingPosition, Vector3 rotation, Vector3 direction)
+    {
+        if(_playerControls == null) _playerControls = GetComponent<PlayerControls>();
+        GameObject missile = Instantiate(
+            _playerControls.ballisticMissilePrefab, 
+            startingPosition, 
+            Quaternion.Euler(rotation));
+        missile.GetComponent<NetworkObject>().Spawn();
+        missile.transform.GetComponent<Rigidbody>().AddForce(direction * 2000);        
     }
 }
 

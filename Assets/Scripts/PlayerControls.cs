@@ -10,7 +10,7 @@ public class PlayerControls : NetworkBehaviour
     [SerializeField]
     private GameObject cameraPrefab;
     [SerializeField]
-    private GameObject ballisticMissilePrefab;
+    public GameObject ballisticMissilePrefab;
     [NonSerialized]
     public GameObject Camera;
 

@@ -1,7 +1,8 @@
+using Unity.Netcode;
 using Unity.VisualScripting;
 using UnityEngine;
 
-public class OrbitState : MonoBehaviour
+public class OrbitState : NetworkBehaviour
 {
     private PlayerControls _playerControls;
     private GameObject _playerCamera;
@@ -47,7 +48,6 @@ public class OrbitState : MonoBehaviour
     public void OnUpdate()
     {
         if(Input.GetKeyDown(KeyCode.R)) CustomEvent.Trigger(gameObject, "StartAim");
-        Debug.Log("pivot: "+ _transformPivot.eulerAngles.y);  
     }
 
     public void OnLateUpdate()
