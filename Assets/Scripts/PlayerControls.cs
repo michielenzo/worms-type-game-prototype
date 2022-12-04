@@ -1,5 +1,7 @@
 
+using System;
 using Unity.Netcode;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Serialization;
 
@@ -9,8 +11,8 @@ public class PlayerControls : NetworkBehaviour
     private GameObject cameraPrefab;
     [SerializeField]
     private GameObject ballisticMissilePrefab;
-
-    private GameObject _camera;
+    [NonSerialized]
+    public GameObject Camera;
 
     public override void OnNetworkSpawn()
     {
@@ -18,8 +20,9 @@ public class PlayerControls : NetworkBehaviour
         
         if(IsOwner) {
             // Instantiate the camera and assign the player as its follow target
-            _camera = _camera = Instantiate(cameraPrefab, Vector3.zero, Quaternion.identity);
-            _camera.GetComponentInChildren<CameraConfig>().followTarget = gameObject;
+            Camera = Instantiate(cameraPrefab, Vector3.zero, Quaternion.identity);
+            Camera.GetComponentInChildren<CameraConfig>().followTarget = gameObject;
+            CustomEvent.Trigger(gameObject, "StartMachine");
         }
     }
 
@@ -36,7 +39,7 @@ public class PlayerControls : NetworkBehaviour
 
     private void Move()
     {
-        Vector3 orbitCameraForwardDirection = _camera.transform.forward;
+        Vector3 orbitCameraForwardDirection = Camera.transform.forward;
         orbitCameraForwardDirection.y = 0;
         transform.Translate(orbitCameraForwardDirection * (Time.deltaTime * 10));
     }

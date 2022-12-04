@@ -3,9 +3,12 @@ using UnityEngine;
 
 public class OrbitState : MonoBehaviour
 {
+    private PlayerControls _playerControls;
+    private GameObject _playerCamera;
+    
     private Transform _transformCamera;
     private Transform _transformPivot;
-    
+
     private Vector3 _localRotation;
     private Vector3 _savedEulers;
     
@@ -27,16 +30,17 @@ public class OrbitState : MonoBehaviour
     private void Start()
     {
         _config = GetComponent<CameraConfig>();
-        
-        _transformPivot = transform.parent;
-
         Cursor.lockState = CursorLockMode.Locked;
     }
     
     public void OnEnter()
     {
         Debug.Log("Enter Orbit");
-        if (_transformCamera == null) _transformCamera = transform;
+        if(_playerControls == null) _playerControls = GetComponent<PlayerControls>();
+        if(_playerCamera == null) _playerCamera = _playerControls.Camera;
+        if(_transformPivot == null) _transformPivot = _playerCamera.transform;
+        if (_transformCamera == null) _transformCamera = _playerCamera.transform.Find("Camera");
+        
         _transformCamera.eulerAngles = _savedEulers;
     }
 

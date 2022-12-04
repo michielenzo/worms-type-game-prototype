@@ -4,6 +4,9 @@ using UnityEngine.Serialization;
 
 public class AimState : MonoBehaviour
 {
+    private PlayerControls _playerControls;
+    private GameObject _playerCamera;
+    
     private Transform _transformCamera;
     private Transform _transformPivot;
     
@@ -20,15 +23,16 @@ public class AimState : MonoBehaviour
     private void Start()
     {
         _config = GetComponent<CameraConfig>();
-        
-        var trans = transform;
-        _transformCamera = trans;
-        _transformPivot = trans.parent;
     }
 
     public void OnEnter()
     {
         Debug.Log("Enter Aim");
+        if(_playerControls == null) _playerControls = GetComponent<PlayerControls>();
+        if(_playerCamera == null) _playerCamera = _playerControls.Camera;
+        if(_transformPivot == null) _transformPivot = _playerCamera.transform;
+        if (_transformCamera == null) _transformCamera = _playerCamera.transform.Find("Camera");
+        
         _yaw = _transformPivot.eulerAngles.y;
         _pitch = 0f;
     }
