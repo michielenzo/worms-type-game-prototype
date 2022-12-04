@@ -1,13 +1,16 @@
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public class AimState : MonoBehaviour
 {
     private Transform _transformCamera;
     private Transform _transformPivot;
     
-    public float speedH = 2.0f;
-    public float speedV = 2.0f;
+    [SerializeField]
+    private float yawSensitivity = 2.0f;
+    [SerializeField]
+    public float pitchSensitivity = 2.0f;
 
     private float _yaw;
     private float _pitch;
@@ -52,8 +55,8 @@ public class AimState : MonoBehaviour
             _transformPivot.position, 
             12 * Time.deltaTime);
 
-        _yaw += speedH * Input.GetAxis("Mouse X");
-        _pitch -= speedV * Input.GetAxis("Mouse Y");
+        _yaw += yawSensitivity * Input.GetAxis("Mouse X");
+        _pitch -= pitchSensitivity * Input.GetAxis("Mouse Y");
 
         Quaternion quaternion = Quaternion.Euler(_pitch, _yaw, 0);
         _transformCamera.rotation = quaternion;
