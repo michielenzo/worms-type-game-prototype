@@ -156,3 +156,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cameraPrefab: {fileID: 1435627377655670476, guid: 54a674dce6cd4e747ae96d4fe7fb19c7, type: 3}
+  ballisticMissilePrefab: {fileID: 4294812629833519492, guid: cee33e1f0175df8418cfbbb5fff91f4a, type: 3}
