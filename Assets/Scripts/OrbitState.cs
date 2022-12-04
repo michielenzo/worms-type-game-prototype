@@ -1,6 +1,3 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -10,6 +7,7 @@ public class OrbitState : MonoBehaviour
     private Transform _transformPivot;
     
     private Vector3 _localRotation;
+    private Vector3 _savedEulers;
     
     [SerializeField]
     private float cameraDistance = 10f;
@@ -30,9 +28,7 @@ public class OrbitState : MonoBehaviour
     {
         _config = GetComponent<CameraConfig>();
         
-        var trans = transform;
-        _transformCamera = trans;
-        _transformPivot = trans.parent;
+        _transformPivot = transform.parent;
 
         Cursor.lockState = CursorLockMode.Locked;
     }
@@ -40,22 +36,25 @@ public class OrbitState : MonoBehaviour
     public void OnEnter()
     {
         Debug.Log("Enter Orbit");
+        if (_transformCamera == null) _transformCamera = transform;
+        _transformCamera.eulerAngles = _savedEulers;
     }
 
     public void OnUpdate()
     {
         if(Input.GetKeyDown(KeyCode.R)) CustomEvent.Trigger(gameObject, "StartAim");
+        Debug.Log("pivot: "+ _transformPivot.eulerAngles.y);  
     }
 
     public void OnLateUpdate()
     {
-        Debug.Log("Late Update Orbit");
         Orbit();
     }
 
     public void OnExit()
     {
         Debug.Log("Exit Orbit");
+        _savedEulers = _transformCamera.eulerAngles;
     }
     
     private void Orbit()

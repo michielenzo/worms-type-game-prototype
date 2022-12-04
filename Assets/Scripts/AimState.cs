@@ -1,6 +1,3 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -9,12 +6,11 @@ public class AimState : MonoBehaviour
     private Transform _transformCamera;
     private Transform _transformPivot;
     
-    // Aim camera
-    /*public float speedH = 2.0f;
+    public float speedH = 2.0f;
     public float speedV = 2.0f;
 
-    private float yaw = 0.0f;
-    private float pitch = 0.0f;*/
+    private float _yaw;
+    private float _pitch;
 
     private CameraConfig _config;
 
@@ -30,6 +26,8 @@ public class AimState : MonoBehaviour
     public void OnEnter()
     {
         Debug.Log("Enter Aim");
+        _yaw = _transformPivot.eulerAngles.y;
+        _pitch = 0f;
     }
 
     public void OnUpdate()
@@ -39,7 +37,6 @@ public class AimState : MonoBehaviour
 
     public void OnLateUpdate()
     {
-        Debug.Log("Late Update Aim");
         AimCam();
     }
 
@@ -50,13 +47,16 @@ public class AimState : MonoBehaviour
     
     private void AimCam()
     {
-        transform.position = Vector3.Lerp(transform.position, _transformPivot.position, 12 * Time.deltaTime);
+        _transformCamera.position = Vector3.Lerp(
+            _transformCamera.position, 
+            _transformPivot.position, 
+            12 * Time.deltaTime);
 
-        /*yaw += speedH * Input.GetAxis("Mouse X");
-        pitch -= speedV * Input.GetAxis("Mouse Y");
-        
-        Debug.Log(transform.eulerAngles);
-        transform.eulerAngles = new Vector3(pitch, yaw, 0.0f);*/
+        _yaw += speedH * Input.GetAxis("Mouse X");
+        _pitch -= speedV * Input.GetAxis("Mouse Y");
+
+        Quaternion quaternion = Quaternion.Euler(_pitch, _yaw, 0);
+        _transformCamera.rotation = quaternion;
     }
 }
 
