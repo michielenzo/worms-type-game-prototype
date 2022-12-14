@@ -20,16 +20,19 @@ public class BallisticMissile : NetworkBehaviour
             GameObject explosion = Instantiate(explosionPrefab, transform.position, Quaternion.identity);
             
             explosion.GetComponent<NetworkObject>().Spawn();
-            
-            GetComponent<NetworkObject>().Despawn();
 
             if (other.collider is TerrainCollider)
             {
                 Vector3 collisionPoint = other.GetContact(0).point;
                 RaiseTerrain(collisionPoint);
+                SynchronizeTerrainClientRpc(collisionPoint);
             }
+            
+            GetComponent<NetworkObject>().Despawn();
         }
     }
+    
+    
 
     private void RaiseTerrain(Vector3 worldPoint)
     {
@@ -41,14 +44,21 @@ public class BallisticMissile : NetworkBehaviour
         
         //Convert world to terrain heights position
         //TODO maak hier een functie van die een vector2 ofso returned.
+        //TODO dit werkt nu alleen als het terrein op 0,0 gepostitioneerd wordt.
         int xPosTerrain = (int) (worldPoint.x / terrainData.size.x * terrainWidth);
         int zPosTerrain = (int) (worldPoint.z / terrainData.size.z * terrainHeight);
     
         float[,] modifiedHeights = terrainData.GetHeights(0,0,terrainWidth, terrainHeight);
 
-        modifiedHeights[zPosTerrain, xPosTerrain] = 0.01f;
+        modifiedHeights[zPosTerrain, xPosTerrain] = 0.07f;
         
         terrainData.SetHeights(0,0, modifiedHeights);
+    }
+
+    [ClientRpc]
+    private void SynchronizeTerrainClientRpc(Vector3 worldPoint)
+    {
+        RaiseTerrain(worldPoint);
     }
 }
 
