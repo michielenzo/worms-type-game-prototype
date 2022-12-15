@@ -44,17 +44,18 @@ public class BallisticMissile : NetworkBehaviour
         
         //Convert world to terrain heights position
         //TODO maak hier een functie van die een vector2 ofso returned.
-        //TODO dit werkt nu alleen als het terrein op 0,0 gepostitioneerd wordt.
-        int xPosTerrain = (int) (worldPoint.x / terrainData.size.x * terrainWidth);
-        int zPosTerrain = (int) (worldPoint.z / terrainData.size.z * terrainHeight);
+        Vector3 terrainPosition = terrain.gameObject.transform.position;
+        int xPosTerrainHeights = (int) ((worldPoint.x - terrainPosition.x)/ terrainData.size.x * terrainWidth);
+        int zPosTerrainHeights = (int) ((worldPoint.z - terrainPosition.z)/ terrainData.size.z * terrainHeight);
     
         float[,] modifiedHeights = terrainData.GetHeights(0,0,terrainWidth, terrainHeight);
 
-        modifiedHeights[zPosTerrain, xPosTerrain] = 0.07f;
+        modifiedHeights[zPosTerrainHeights, xPosTerrainHeights] = 0.07f;
         
         terrainData.SetHeights(0,0, modifiedHeights);
     }
-
+    
+    
     [ClientRpc]
     private void SynchronizeTerrainClientRpc(Vector3 worldPoint)
     {
