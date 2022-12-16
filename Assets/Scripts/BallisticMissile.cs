@@ -66,9 +66,12 @@ public class BallisticMissile : NetworkBehaviour
             {
                 float distanceFromCenter = Vector2.Distance(craterCenterIndex, new Vector2(x,z));
                 Debug.Log("x: "+x+" y: "+ z+" dist: "+ distanceFromCenter);
-                double depthChange = craterDepth - distanceFromCenter / greatestDistance * craterDepth;
 
-                modifiedHeights[x, z] -= (float) depthChange;
+                if (distanceFromCenter <= craterRadius)
+                {
+                    double depthChange = craterDepth - distanceFromCenter / craterRadius * craterDepth;
+                    modifiedHeights[x, z] -= (float) depthChange;
+                }
             }
         }
         
