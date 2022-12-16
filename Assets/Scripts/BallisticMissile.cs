@@ -12,6 +12,11 @@ public class BallisticMissile : NetworkBehaviour
     // This makes sure there are no double explosions.
     private bool _exploded;
 
+    [SerializeField]
+    private float craterDepth = 0.02f;
+    [SerializeField] 
+    private int craterRadius = 3;
+
     private void OnCollisionEnter(Collision other)
     {
         if (IsServer && !_exploded)
@@ -24,7 +29,7 @@ public class BallisticMissile : NetworkBehaviour
             if (other.collider is TerrainCollider)
             {
                 Vector3 collisionPoint = other.GetContact(0).point;
-                RaiseTerrain(collisionPoint);
+                TerraformCrater(collisionPoint);
                 SynchronizeTerrainClientRpc(collisionPoint);
             }
             
@@ -32,9 +37,7 @@ public class BallisticMissile : NetworkBehaviour
         }
     }
     
-    
-
-    private void RaiseTerrain(Vector3 worldPoint)
+    private void TerraformCrater(Vector3 worldPoint)
     {
         Terrain terrain = Terrain.activeTerrain;
 
@@ -48,18 +51,41 @@ public class BallisticMissile : NetworkBehaviour
         int xPosTerrainHeights = (int) ((worldPoint.x - terrainPosition.x)/ terrainData.size.x * terrainWidth);
         int zPosTerrainHeights = (int) ((worldPoint.z - terrainPosition.z)/ terrainData.size.z * terrainHeight);
     
-        float[,] modifiedHeights = terrainData.GetHeights(0,0,terrainWidth, terrainHeight);
+        float[,] modifiedHeights = terrainData.GetHeights(
+            xPosTerrainHeights - craterRadius, 
+            zPosTerrainHeights - craterRadius, 
+            craterRadius * 2, 
+            craterRadius * 2);
 
-        modifiedHeights[zPosTerrainHeights, xPosTerrainHeights] = 0.07f;
+        Vector2 craterCenterIndex = new Vector2(craterRadius, craterRadius);
+        double greatestDistance = Math.Sqrt(Math.Pow(craterRadius, 2) + Math.Pow(craterRadius, 2));
         
-        terrainData.SetHeights(0,0, modifiedHeights);
+        for (int x = 0; x < craterRadius *2; x++)
+        {
+            for (int z = 0; z < craterRadius*2; z++)
+            {
+                float distanceFromCenter = Vector2.Distance(craterCenterIndex, new Vector2(x,z));
+                Debug.Log("x: "+x+" y: "+ z+" dist: "+ distanceFromCenter);
+                double depthChange = craterDepth - distanceFromCenter / greatestDistance * craterDepth;
+
+                modifiedHeights[x, z] -= (float) depthChange;
+            }
+        }
+        
+        /*Debug.Log(modifiedHeights[zPosTerrainHeights, xPosTerrainHeights]);
+        modifiedHeights[zPosTerrainHeights, xPosTerrainHeights] -= craterDepth;
+        Debug.Log(modifiedHeights[zPosTerrainHeights, xPosTerrainHeights]);*/
+        
+        terrainData.SetHeights(
+            xPosTerrainHeights - craterRadius,
+            zPosTerrainHeights - craterRadius,
+            modifiedHeights);
     }
-    
-    
+
     [ClientRpc]
     private void SynchronizeTerrainClientRpc(Vector3 worldPoint)
     {
-        RaiseTerrain(worldPoint);
+        TerraformCrater(worldPoint);
     }
 }
 
