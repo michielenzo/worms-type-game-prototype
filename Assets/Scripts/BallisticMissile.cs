@@ -1,6 +1,3 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -45,50 +42,62 @@ public class BallisticMissile : NetworkBehaviour
         int terrainWidth = terrainData.heightmapResolution;
         int terrainHeight = terrainData.heightmapResolution;
         
-        //Convert world to terrain heights position
-        //TODO maak hier een functie van die een vector2 ofso returned.
         Vector3 terrainPosition = terrain.gameObject.transform.position;
         int xPosTerrainHeights = (int) ((worldPoint.x - terrainPosition.x)/ terrainData.size.x * terrainWidth);
         int zPosTerrainHeights = (int) ((worldPoint.z - terrainPosition.z)/ terrainData.size.z * terrainHeight);
-    
-        float[,] modifiedHeights = terrainData.GetHeights(
-            xPosTerrainHeights - craterRadius, 
-            zPosTerrainHeights - craterRadius, 
-            craterRadius * 2, 
-            craterRadius * 2);
 
-        Vector2 craterCenterIndex = new Vector2(craterRadius, craterRadius);
-        double greatestDistance = Math.Sqrt(Math.Pow(craterRadius, 2) + Math.Pow(craterRadius, 2));
+        int xBase = xPosTerrainHeights - craterRadius >= 0 ? xPosTerrainHeights - craterRadius : 0;
+        int zBase = zPosTerrainHeights - craterRadius >= 0 ? zPosTerrainHeights - craterRadius : 0;
         
-        for (int x = 0; x < craterRadius *2; x++)
+
+
+        int craterWidth = craterRadius * 2;
+        int widthOffset = 0;
+        if (xPosTerrainHeights - craterRadius <= 0) widthOffset = xPosTerrainHeights - craterRadius;
+        craterWidth += widthOffset;
+        
+            
+        int craterHeight = craterRadius * 2;
+        int heightOffset = 0;
+        if (zPosTerrainHeights - craterRadius <= 0) heightOffset = zPosTerrainHeights - craterRadius;
+        craterHeight += heightOffset;
+        
+        float[,] modifiedHeights = 
+            terrainData.GetHeights(xBase, zBase, craterWidth, craterHeight);
+        
+        Debug.Log("xPosTerrainHeights: " + xPosTerrainHeights);
+        Debug.Log("zPosTerrainHeights: " + zPosTerrainHeights);
+        Debug.Log("xBase: " + xBase);
+        Debug.Log("zBase: " + zBase);
+
+        // ReSharper disable twice PossibleLossOfFraction
+        Vector2 craterCenterIndex = new Vector2(x: craterWidth/2 + widthOffset, craterHeight/2 + heightOffset);
+        
+        Debug.Log("craterWidth: " + craterWidth + "craterHeight: " + craterHeight + " lengthDim 1: " + modifiedHeights.GetLength(0) + " lengthDim2: " + modifiedHeights.GetLength(1));
+
+        for (int x = 0; x < craterWidth; x++)
         {
-            for (int z = 0; z < craterRadius*2; z++)
+            //Debug.Log(x);
+            for (int z = 0; z < craterHeight; z++)
             {
+                //Debug.Log(x+ " "+z);
                 float distanceFromCenter = Vector2.Distance(craterCenterIndex, new Vector2(x,z));
-                Debug.Log("x: "+x+" y: "+ z+" dist: "+ distanceFromCenter);
 
                 if (distanceFromCenter <= craterRadius)
                 {
                     double depthChange = craterDepth - distanceFromCenter / craterRadius * craterDepth;
-                    modifiedHeights[x, z] -= (float) depthChange;
+                    modifiedHeights[z, x] -= (float) depthChange;
                 }
             }
         }
-        
-        /*Debug.Log(modifiedHeights[zPosTerrainHeights, xPosTerrainHeights]);
-        modifiedHeights[zPosTerrainHeights, xPosTerrainHeights] -= craterDepth;
-        Debug.Log(modifiedHeights[zPosTerrainHeights, xPosTerrainHeights]);*/
-        
-        terrainData.SetHeights(
-            xPosTerrainHeights - craterRadius,
-            zPosTerrainHeights - craterRadius,
-            modifiedHeights);
+
+        terrainData.SetHeights(xBase, zBase, modifiedHeights);
     }
 
     [ClientRpc]
     private void SynchronizeTerrainClientRpc(Vector3 worldPoint)
     {
-        TerraformCrater(worldPoint);
+        if(IsClient) TerraformCrater(worldPoint);
     }
 }
 
