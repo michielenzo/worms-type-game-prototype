@@ -41,6 +41,6 @@ public class PlayerControls : NetworkBehaviour
     {
         Vector3 orbitCameraForwardDirection = Camera.transform.forward;
         orbitCameraForwardDirection.y = 0;
-        transform.Translate(orbitCameraForwardDirection * (Time.deltaTime * 10));
+        transform.Translate(orbitCameraForwardDirection.normalized * (Time.deltaTime * 10));
     }
 }

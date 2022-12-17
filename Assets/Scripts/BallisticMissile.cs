@@ -49,14 +49,11 @@ public class BallisticMissile : NetworkBehaviour
         int xBase = xPosTerrainHeights - craterRadius >= 0 ? xPosTerrainHeights - craterRadius : 0;
         int zBase = zPosTerrainHeights - craterRadius >= 0 ? zPosTerrainHeights - craterRadius : 0;
         
-
-
         int craterWidth = craterRadius * 2;
         int widthOffset = 0;
         if (xPosTerrainHeights - craterRadius <= 0) widthOffset = xPosTerrainHeights - craterRadius;
         craterWidth += widthOffset;
         
-            
         int craterHeight = craterRadius * 2;
         int heightOffset = 0;
         if (zPosTerrainHeights - craterRadius <= 0) heightOffset = zPosTerrainHeights - craterRadius;
