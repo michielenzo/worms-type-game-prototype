@@ -13,10 +13,7 @@ public class NetworkManagerUI : MonoBehaviour
 
     private void Awake()
     {
-        Debug.Log("Awake!");
-        
         serverBtn.onClick.AddListener(() => {
-            Debug.Log("Click");
             bool success = NetworkManager.Singleton.StartServer();
             if (success) {
                 serverBtn.GetComponent<Image>().color = Color.yellow;
@@ -26,7 +23,6 @@ public class NetworkManagerUI : MonoBehaviour
         });
         hostBtn.onClick.AddListener(() =>
         {
-            Debug.Log("Click");
             bool success = NetworkManager.Singleton.StartHost();
             if (success) {
                 serverBtn.GetComponent<Image>().color = Color.white;
@@ -36,7 +32,6 @@ public class NetworkManagerUI : MonoBehaviour
         });
         clientBtn.onClick.AddListener(() =>
         {
-            Debug.Log("Click");
             bool success = NetworkManager.Singleton.StartClient();
             if (success) {
                 serverBtn.GetComponent<Image>().color = Color.white;

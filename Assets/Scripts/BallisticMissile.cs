@@ -48,36 +48,57 @@ public class BallisticMissile : NetworkBehaviour
 
         int xBase = xPosTerrainHeights - craterRadius >= 0 ? xPosTerrainHeights - craterRadius : 0;
         int zBase = zPosTerrainHeights - craterRadius >= 0 ? zPosTerrainHeights - craterRadius : 0;
+
+        int craterCenterX;
+        int craterCenterZ;
         
+        // Calculate the craterWidth, craterCenterX and the widthOffset taking into account the edges of the terrain.
         int craterWidth = craterRadius * 2;
         int widthOffset = 0;
-        if (xPosTerrainHeights - craterRadius <= 0) widthOffset = xPosTerrainHeights - craterRadius;
+        if (xPosTerrainHeights - craterRadius <= 0)
+        {
+            widthOffset = xPosTerrainHeights - craterRadius;
+            craterCenterX = craterWidth/2 + widthOffset;
+        }
+        else if (xPosTerrainHeights + craterRadius > terrainWidth)
+        {
+            widthOffset = -(craterRadius - (terrainWidth - xPosTerrainHeights));
+            craterCenterX = craterRadius;
+        }
+        else
+        {
+            craterCenterX = craterWidth/2 + widthOffset;
+        }
         craterWidth += widthOffset;
         
+        // Calculate the craterHeight, craterCenterZ and the heightOffset taking into account the edges of the terrain.
         int craterHeight = craterRadius * 2;
         int heightOffset = 0;
-        if (zPosTerrainHeights - craterRadius <= 0) heightOffset = zPosTerrainHeights - craterRadius;
+        if (zPosTerrainHeights - craterRadius <= 0)
+        {
+            heightOffset = zPosTerrainHeights - craterRadius;
+            craterCenterZ = craterHeight/2 + heightOffset;
+        }
+        else if (zPosTerrainHeights + craterRadius > terrainHeight)
+        {
+            heightOffset = -(craterRadius - (terrainHeight - zPosTerrainHeights));
+            craterCenterZ = craterRadius;
+        }
+        else
+        {
+            craterCenterZ = craterHeight/2 + heightOffset;
+        }
         craterHeight += heightOffset;
         
         float[,] modifiedHeights = 
             terrainData.GetHeights(xBase, zBase, craterWidth, craterHeight);
         
-        Debug.Log("xPosTerrainHeights: " + xPosTerrainHeights);
-        Debug.Log("zPosTerrainHeights: " + zPosTerrainHeights);
-        Debug.Log("xBase: " + xBase);
-        Debug.Log("zBase: " + zBase);
-
-        // ReSharper disable twice PossibleLossOfFraction
-        Vector2 craterCenterIndex = new Vector2(x: craterWidth/2 + widthOffset, craterHeight/2 + heightOffset);
-        
-        Debug.Log("craterWidth: " + craterWidth + "craterHeight: " + craterHeight + " lengthDim 1: " + modifiedHeights.GetLength(0) + " lengthDim2: " + modifiedHeights.GetLength(1));
+        Vector2 craterCenterIndex = new Vector2(x: craterCenterX, craterCenterZ);
 
         for (int x = 0; x < craterWidth; x++)
         {
-            //Debug.Log(x);
             for (int z = 0; z < craterHeight; z++)
             {
-                //Debug.Log(x+ " "+z);
                 float distanceFromCenter = Vector2.Distance(craterCenterIndex, new Vector2(x,z));
 
                 if (distanceFromCenter <= craterRadius)
