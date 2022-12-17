@@ -42,6 +42,7 @@ public class BallisticMissile : NetworkBehaviour
         int terrainWidth = terrainData.heightmapResolution;
         int terrainHeight = terrainData.heightmapResolution;
         
+        // Convert the worldpoint to a location in the terrain heightMap. 
         Vector3 terrainPosition = terrain.gameObject.transform.position;
         int xPosTerrainHeights = (int) ((worldPoint.x - terrainPosition.x)/ terrainData.size.x * terrainWidth);
         int zPosTerrainHeights = (int) ((worldPoint.z - terrainPosition.z)/ terrainData.size.z * terrainHeight);
@@ -99,11 +100,11 @@ public class BallisticMissile : NetworkBehaviour
         {
             for (int z = 0; z < craterHeight; z++)
             {
-                float distanceFromCenter = Vector2.Distance(craterCenterIndex, new Vector2(x,z));
+                float distanceFromCraterCenter = Vector2.Distance(craterCenterIndex, new Vector2(x,z));
 
-                if (distanceFromCenter <= craterRadius)
+                if (distanceFromCraterCenter <= craterRadius)
                 {
-                    double depthChange = craterDepth - distanceFromCenter / craterRadius * craterDepth;
+                    double depthChange = craterDepth - distanceFromCraterCenter / craterRadius * craterDepth;
                     modifiedHeights[z, x] -= (float) depthChange;
                 }
             }
