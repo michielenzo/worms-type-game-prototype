@@ -14,6 +14,9 @@ public class BallisticMissile : NetworkBehaviour
     [SerializeField] 
     private int craterRadius = 3;
 
+    private int _grassLayerIndex = 0;
+    private int _crackedStoneLayerIndex = 1;
+
     private void OnCollisionEnter(Collision other)
     {
         if (IsServer && !_exploded)
@@ -52,7 +55,7 @@ public class BallisticMissile : NetworkBehaviour
 
         int craterCenterX;
         int craterCenterZ;
-        
+
         // Calculate the craterWidth, craterCenterX and the widthOffset taking into account the edges of the terrain.
         int craterWidth = craterRadius * 2;
         int widthOffset = 0;
@@ -91,8 +94,8 @@ public class BallisticMissile : NetworkBehaviour
         }
         craterHeight += heightOffset;
         
-        float[,] modifiedHeights = 
-            terrainData.GetHeights(xBase, zBase, craterWidth, craterHeight);
+        float[,] modifiedHeights = terrainData.GetHeights(xBase, zBase, craterWidth, craterHeight);
+        float[,,] modifiedAlphas = terrainData.GetAlphamaps(xBase, zBase, craterWidth, craterHeight);
         
         Vector2 craterCenterIndex = new Vector2(x: craterCenterX, craterCenterZ);
 
@@ -104,13 +107,19 @@ public class BallisticMissile : NetworkBehaviour
 
                 if (distanceFromCraterCenter <= craterRadius)
                 {
+                    // Deform terrain
                     double depthChange = craterDepth - distanceFromCraterCenter / craterRadius * craterDepth;
                     modifiedHeights[z, x] -= (float) depthChange;
+                    
+                    // Apply crater texture
+                    modifiedAlphas[z, x, _crackedStoneLayerIndex] = 0.5f;
+                    modifiedAlphas[z, x, _grassLayerIndex] = 0.6f;
                 }
             }
         }
 
         terrainData.SetHeights(xBase, zBase, modifiedHeights);
+        terrainData.SetAlphamaps(xBase, zBase, modifiedAlphas);
     }
 
     [ClientRpc]

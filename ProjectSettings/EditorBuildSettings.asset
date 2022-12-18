@@ -14,4 +14,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/TestScene2 Terrain.unity
     guid: 36f531c50b6fa2d4f89b73db1a1e06fd
+  - enabled: 1
+    path: Assets/Scenes/TestScene painting terrain.unity
+    guid: afbff0a6992766447994eaa8bdef7e1c
   m_configObjects: {}
