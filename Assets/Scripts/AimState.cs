@@ -77,7 +77,7 @@ public class AimState : NetworkBehaviour
     {
         Vector3 rotation = _transformCamera.eulerAngles; rotation.x += 90;
         Vector3 cameraForward = _transformCamera.forward;
-        Vector3 startingPosition = _transformCamera.position += cameraForward * 5;
+        Vector3 startingPosition = _transformCamera.position += cameraForward.normalized * 3;
 
         SpawnBallisticMissileOnNetworkServerRpc(startingPosition, rotation, cameraForward);
     }

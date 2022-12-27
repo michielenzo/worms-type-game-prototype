@@ -8,7 +8,7 @@ public class Backup : MonoBehaviour
     private float[,,] _terrainAlphasBackup;
 
     private void Awake()
-    {
+    { 
         CreateBackupForTerrain();
     }
 

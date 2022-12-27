@@ -14,6 +14,9 @@ public class PlayerControls : NetworkBehaviour
     [NonSerialized]
     public GameObject Camera;
 
+    [SerializeField] 
+    private float movementSpeed = 15;
+
     public override void OnNetworkSpawn()
     {
         Cursor.lockState = CursorLockMode.Locked;
@@ -29,7 +32,7 @@ public class PlayerControls : NetworkBehaviour
     private void Update()
     {
         if (Input.GetKeyDown(KeyCode.P) && IsOwner) ToggleCursor();
-        if(Input.GetKey(KeyCode.W) && IsOwner) Move();
+        Move();
     }
 
     private void ToggleCursor()
@@ -39,8 +42,18 @@ public class PlayerControls : NetworkBehaviour
 
     private void Move()
     {
-        Vector3 orbitCameraForwardDirection = Camera.transform.forward;
+        Vector3 movementDirection = Vector3.zero;
+        
+        Vector3 orbitCameraForwardDirection = Camera.transform.forward.normalized;
         orbitCameraForwardDirection.y = 0;
-        transform.Translate(orbitCameraForwardDirection.normalized * (Time.deltaTime * 10));
+
+        if (Input.GetKey(KeyCode.W) && IsOwner) movementDirection += orbitCameraForwardDirection;
+        if (Input.GetKey(KeyCode.S) && IsOwner) movementDirection += -orbitCameraForwardDirection;
+        if (Input.GetKey(KeyCode.A) && IsOwner) movementDirection +=
+            Quaternion.AngleAxis(-90, Vector3.up) * orbitCameraForwardDirection;  
+        if (Input.GetKey(KeyCode.D) && IsOwner) movementDirection += 
+            Quaternion.AngleAxis(90, Vector3.up) * orbitCameraForwardDirection;  
+        
+        transform.Translate(movementDirection.normalized * (Time.deltaTime * movementSpeed));
     }
 }

@@ -33,7 +33,20 @@ public class BallisticMissile : NetworkBehaviour
                 SynchronizeTerrainClientRpc(collisionPoint);
             }
             
+            ApplyExplosionForce();
             GetComponent<NetworkObject>().Despawn();
+        }
+    }
+
+    private void ApplyExplosionForce()
+    {
+        Vector3 explosionPos = transform.position;
+        Collider[] colliders = Physics.OverlapSphere(explosionPos, 20);
+        foreach (Collider hit in colliders)
+        {
+            Rigidbody rb = hit.GetComponent<Rigidbody>();
+
+            if (rb != null) rb.AddExplosionForce(600, explosionPos, 20, 3.0F);
         }
     }
     
@@ -125,7 +138,7 @@ public class BallisticMissile : NetworkBehaviour
     [ClientRpc]
     private void SynchronizeTerrainClientRpc(Vector3 worldPoint)
     {
-        if(IsClient) TerraformCrater(worldPoint);
+        if(!IsHost) TerraformCrater(worldPoint);
     }
 }
 
