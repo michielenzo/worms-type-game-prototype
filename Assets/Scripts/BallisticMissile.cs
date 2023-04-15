@@ -33,13 +33,15 @@ public class BallisticMissile : NetworkBehaviour
                 SynchronizeTerrainClientRpc(collisionPoint);
             }
             
-            ApplyExplosionForce();
+            ApplyExplosionForceClientRpc();
             GetComponent<NetworkObject>().Despawn();
         }
     }
 
-    private void ApplyExplosionForce()
+    [ClientRpc]
+    private void ApplyExplosionForceClientRpc()
     {
+        Debug.Log("Hallo!");
         Vector3 explosionPos = transform.position;
         Collider[] colliders = Physics.OverlapSphere(explosionPos, 20);
         foreach (Collider hit in colliders)

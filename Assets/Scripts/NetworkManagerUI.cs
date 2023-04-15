@@ -21,8 +21,7 @@ public class NetworkManagerUI : MonoBehaviour
                 clientBtn.GetComponent<Image>().color = Color.white;
             }
         });
-        hostBtn.onClick.AddListener(() =>
-        {
+        hostBtn.onClick.AddListener(() => {
             bool success = NetworkManager.Singleton.StartHost();
             if (success) {
                 serverBtn.GetComponent<Image>().color = Color.white;
@@ -30,8 +29,7 @@ public class NetworkManagerUI : MonoBehaviour
                 clientBtn.GetComponent<Image>().color = Color.white;
             }
         });
-        clientBtn.onClick.AddListener(() =>
-        {
+        clientBtn.onClick.AddListener(() => {
             bool success = NetworkManager.Singleton.StartClient();
             if (success) {
                 serverBtn.GetComponent<Image>().color = Color.white;
