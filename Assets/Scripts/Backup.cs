@@ -27,15 +27,15 @@ public class Backup : MonoBehaviour
                 terrainData.heightmapResolution);
         _terrainAlphasBackup =
             terrainData.GetAlphamaps(0, 0, 
-                terrainData.heightmapResolution, 
-                terrainData.heightmapResolution);
+                terrainData.alphamapResolution, 
+                terrainData.alphamapResolution);
     }
     
     private void RestoreTerrain()
     {
         Terrain terrain = Terrain.activeTerrain;
         TerrainData terrainData = terrain.terrainData;
-        terrainData.SetAlphamaps(1,1, _terrainAlphasBackup);
+        terrainData.SetAlphamaps(0,0, _terrainAlphasBackup);
         terrainData.SetHeights(0, 0, _terrainHeightsBackup);
     }
 }

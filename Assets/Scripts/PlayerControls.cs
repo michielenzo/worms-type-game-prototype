@@ -28,11 +28,13 @@ public class PlayerControls : NetworkBehaviour
             CustomEvent.Trigger(gameObject, "StartMachine");
         }
     }
+    
+    
 
     private void Update()
     {
         if (Input.GetKeyDown(KeyCode.P) && IsOwner) ToggleCursor();
-        Move();
+        if (IsOwner) Move();
     }
 
     private void ToggleCursor()
